@@ -4,9 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CollecTool — optimise ta collection Magic</title>
-<meta name="description" content="Compare ta collection Magic: The Gathering aux recommandations EDHREC pour chaque commandant : score de compatibilité, cartes manquantes, prix, export vers un deckbuilder ou Cardmarket.">
-<meta property="og:title" content="CollecTool — optimise ta collection Magic">
-<meta property="og:description" content="Compare ta collection aux recommandations EDHREC, commandant par commandant.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Crect x='3' y='9' width='23' height='27' rx='5' transform='rotate(-12 14 22)' fill='none' stroke='%23F0B440' stroke-width='2.4' opacity='.65'/%3E%3Crect x='11' y='4' width='24' height='28' rx='5' transform='rotate(8 23 18)' fill='%23F0B440'/%3E%3Cpath d='M23.5 11.5 L29 18.5 L23.5 25.5 L18 18.5 Z' fill='%230A0C12'/%3E%3C/svg%3E">
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap');
@@ -55,7 +52,18 @@
   .tab-btn{background:transparent;border:1.5px solid transparent;color:var(--gold);padding:10px 20px;border-radius:999px;font-size:16px;font-weight:700;cursor:pointer;font-family:var(--font-body);white-space:nowrap;transition:background .15s,color .15s;}
   .tab-btn:hover{background:var(--gold-dim);}
   .tab-btn.active{background:var(--gold);color:#0A0C12;}
-  .topbar-profile{position:relative;margin-left:auto;flex-shrink:0;}
+  .brand-actions{margin-left:auto;display:flex;align-items:center;gap:12px;flex-shrink:0;}
+  .topbar-profile{position:relative;flex-shrink:0;}
+  .lang-switch{position:relative;}
+  .lang-btn{display:flex;align-items:center;gap:9px;background:rgba(255,255,255,.04);border:1.5px solid var(--border-strong);border-radius:999px;padding:7px 13px 7px 9px;cursor:pointer;color:var(--bone);font-family:var(--font-body);font-size:14px;font-weight:700;letter-spacing:.05em;transition:border-color .15s,background .15s;}
+  .lang-btn:hover, .lang-btn[aria-expanded="true"]{border-color:var(--gold);background:var(--gold-dim);}
+  .lang-flag{display:flex;}
+  .lang-flag svg, .lang-opt svg{width:30px;height:20px;border-radius:4px;box-shadow:0 0 0 1px rgba(255,255,255,.2);display:block;flex-shrink:0;}
+  .lang-pop{position:absolute;right:0;top:calc(100% + 12px);min-width:200px;background:var(--surface);border:1px solid var(--border-strong);border-radius:14px;padding:8px;box-shadow:var(--shadow-2);display:flex;flex-direction:column;gap:4px;z-index:60;}
+  .lang-pop[hidden]{display:none;}
+  .lang-opt{display:flex;align-items:center;gap:12px;background:transparent;border:1.5px solid transparent;border-radius:10px;padding:10px 12px;color:var(--bone);font-size:15px;font-weight:600;cursor:pointer;text-align:left;font-family:var(--font-body);}
+  .lang-opt:hover{background:var(--gold-dim);}
+  .lang-opt[aria-checked="true"]{border-color:var(--gold);color:var(--gold);}
   .topbar-user{display:flex;align-items:center;gap:10px;font-size:15px;font-weight:600;color:var(--bone);white-space:nowrap;background:rgba(255,255,255,.04);border:1.5px solid var(--border-strong);border-radius:999px;padding:5px 14px 5px 5px;cursor:pointer;font-family:var(--font-body);transition:border-color .15s,background .15s;}
   .topbar-user:hover, .topbar-user[aria-expanded="true"]{border-color:var(--gold);background:var(--gold-dim);}
   .topbar-avatar{width:36px;height:36px;border-radius:50%;background:var(--gold);color:#0A0C12;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;font-family:var(--font-display);flex-shrink:0;}
@@ -315,6 +323,9 @@
     .site-hero{padding:28px 0 22px;}
     .brand-logo{width:52px;height:52px;}
     .brand-tag{display:none;}
+    .lang-btn #lang-code, .lang-btn .profile-caret{display:none;}
+    .lang-btn{padding:7px 9px;}
+    .brand-actions{gap:8px;}
     .topbar-user span:nth-child(2){display:none;}
     .topbar-user{padding-right:5px;}
     .profile-caret{display:none;}
@@ -329,6 +340,10 @@
 </style>
 </head>
 <body data-base="loading">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="flag-fr" viewBox="0 0 3 2"><rect width="1" height="2" fill="#0055A4"/><rect x="1" width="1" height="2" fill="#fff"/><rect x="2" width="1" height="2" fill="#EF4135"/></symbol>
+  <symbol id="flag-gb" viewBox="0 0 60 30" preserveAspectRatio="xMidYMid slice"><clipPath id="gb-s"><path d="M0,0 v30 h60 v-30 z"/></clipPath><clipPath id="gb-t"><path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/></clipPath><g clip-path="url(#gb-s)"><path d="M0,0 v30 h60 v-30 z" fill="#012169"/><path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/><path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#gb-t)" stroke="#C8102E" stroke-width="4"/><path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/><path d="M30,0 v30 M0,15 h60" stroke="#C8102E" stroke-width="6"/></g></symbol>
+</defs></svg>
 <header class="site-header">
   <div class="brandbar">
     <a class="brand" href="#" aria-label="CollecTool — accueil">
@@ -346,6 +361,14 @@
       </svg>
       <span class="brand-words"><span class="brand-name">Collec<b>Tool</b></span><span class="brand-tag">Optimise ta collection Magic</span></span>
     </a>
+    <div class="brand-actions">
+    <div class="lang-switch">
+      <button type="button" class="lang-btn" id="lang-btn" aria-haspopup="true" aria-expanded="false" title="Langue / Language" translate="no"><span class="lang-flag" id="lang-flag"></span><span id="lang-code">FR</span><span class="profile-caret" aria-hidden="true"></span></button>
+      <div class="lang-pop" id="lang-pop" role="menu" hidden translate="no">
+        <button type="button" class="lang-opt" role="menuitemradio" data-lang="fr"><svg viewBox="0 0 30 20" aria-hidden="true"><use href="#flag-fr" width="30" height="20"/></svg>Français</button>
+        <button type="button" class="lang-opt" role="menuitemradio" data-lang="en"><svg viewBox="0 0 30 20" aria-hidden="true"><use href="#flag-gb" width="30" height="20"/></svg>English</button>
+      </div>
+    </div>
     <div class="topbar-profile">
       <button type="button" class="topbar-user" id="profile-btn" aria-haspopup="true" aria-expanded="false" title="Clique pour changer de profil"><span class="topbar-avatar" id="profile-avatar">M</span><span id="profile-name">Mon profil</span><span class="profile-caret" aria-hidden="true"></span></button>
       <div class="profile-pop" id="profile-pop" hidden>
@@ -354,6 +377,7 @@
         <button type="button" class="btn-solid" id="profile-save">Enregistrer</button>
         <p class="sub">Affiché en haut de la page. Il reste dans ton navigateur.</p>
       </div>
+    </div>
     </div>
   </div>
 </header>
@@ -530,6 +554,369 @@
   </nav>
 </div></footer>
 
+<script>
+// ============================================================
+// Langue (FR / EN) : le français est la langue d'origine du code ; l'anglais est appliqué par
+// traduction du texte affiché (texte des pages + attributs), y compris pour les contenus créés
+// plus tard par le programme. Les noms de cartes / commandants ne sont jamais traduits.
+// ============================================================
+(function(){
+  const EN = {
+"Optimise ta collection Magic": "Optimize your Magic collection",
+"Optimise ta collection Magic,": "Optimize your Magic collection,",
+"commandant par commandant": "commander by commander",
+"Mon profil": "My profile",
+"Ton pseudo": "Your username",
+"Enregistrer": "Save",
+"Affiché en haut de la page. Il reste dans ton navigateur.": "Shown at the top of the page. It stays in your browser.",
+"Clique pour changer de profil": "Click to change profile",
+"ex : ton pseudo": "e.g. your username",
+"ex : Gigatog": "e.g. Gigatog",
+"CollecTool — accueil": "CollecTool — home",
+"Navigation principale": "Main navigation",
+"Liens utiles": "Useful links",
+"Analyse par commandant": "Commander analysis",
+"Ma collection": "My collection",
+"Mes decks": "My decks",
+"Compare les cartes que tu possèdes aux recommandations EDHREC, repère ce qu'il te manque, vois les prix et exporte ta liste vers un deckbuilder ou Cardmarket.": "Compare the cards you own with EDHREC recommendations, spot what you're missing, check prices and export your list to a deckbuilder or Cardmarket.",
+"Importer ma collection": "Import my collection",
+"Choisir un commandant": "Choose a commander",
+"Importe ta collection": "Import your collection",
+"Colle une liste ou un fichier CSV": "Paste a list or a CSV file",
+"Choisis un commandant": "Choose a commander",
+"Dans la liste ou par son nom": "From the list or by name",
+"Vois ce qu'il te manque": "See what you're missing",
+"Score, cartes et prix": "Score, cards and prices",
+"Ajuste ta sélection": "Adjust your selection",
+"Filtres, inclusion, prix max": "Filters, inclusion, max price",
+"Exporte la sélection": "Export the selection",
+"Vers un deckbuilder ou Cardmarket": "To a deckbuilder or Cardmarket",
+"Base de données EDHREC": "EDHREC database",
+"Vérification de la base…": "Checking the database…",
+"Base de données EDHREC installée": "EDHREC database installed",
+"Étape 0 · Installe d'abord la base de données EDHREC": "Step 0 · First, install the EDHREC database",
+"Obligatoire : sans elle, CollecTool ne connaît que quelques commandants. Ça prend 2 minutes, une seule fois.": "Required: without it, CollecTool only knows a few commanders. It takes 2 minutes, one time only.",
+"Télécharge": "Download",
+"le fichier de données EDHREC": "the EDHREC data file",
+"(environ 30 Mo)": "(about 30 MB)",
+"Télécharger DONNÉES EDHREC à jour": "Download up-to-date EDHREC DATA",
+"Importe-le": "Import it",
+"dans CollecTool": "into CollecTool",
+"(quelques minutes, une seule fois)": "(a few minutes, one time only)",
+"Importer nouvelle BDD": "Import new database",
+"Continuer quand même sans la base (quelques commandants seulement)": "Continue anyway without the database (only a few commanders)",
+"Mettre à jour la base EDHREC": "Update the EDHREC database",
+"Connexion à edhrec.com…": "Connecting to edhrec.com…",
+"Téléchargement lancé — une fois terminé (barre de téléchargement du navigateur), clique sur « Importer nouvelle BDD » et choisis le fichier.": "Download started — once it has finished (see your browser's download bar), click “Import new database” and choose the file.",
+"réponse vide": "empty response",
+"Décompression et lecture de l'archive…": "Decompressing and reading the archive…",
+"Analyse du CSV…": "Analyzing the CSV…",
+"(aucun)": "(none)",
+"Pas de données pour ce commandant": "No data for this commander",
+"Ton navigateur ne supporte pas la décompression native (DecompressionStream). Essaie avec une version récente de Chrome, Edge ou Firefox.": "Your browser does not support native decompression (DecompressionStream). Try a recent version of Chrome, Edge or Firefox.",
+"Ce fichier est une archive ZIP (et non gzip/tar), donc l'outil ne peut pas la lire directement. Extrais-la toi-même (clic droit → Extraire tout, ou via 7-Zip/WinRAR), puis charge le fichier .csv obtenu ici avec ce même bouton.": "This file is a ZIP archive (not gzip/tar), so the tool cannot read it directly. Extract it yourself (right-click → Extract all, or with 7-Zip/WinRAR), then load the resulting .csv file here with the same button.",
+"Commandant": "Commander",
+"Ou un autre commandant": "Or another commander",
+"Charger": "Load",
+"Comparer à": "Compare to",
+"Toute ma collection": "My whole collection",
+"Sélectionne-le dans la liste, ou tape son nom exact pour le charger directement depuis EDHREC.": "Pick it from the list, or type its exact name to load it directly from EDHREC.",
+"Nom exact, ex. Atraxa, Praetors' Voice": "Exact name, e.g. Atraxa, Praetors' Voice",
+"Filtrer et trier la liste des commandants": "Filter and sort the commander list",
+"Couleurs": "Colors",
+"Exactement ces couleurs": "Exactly these colors",
+"Contenant ces couleurs": "Containing these colors",
+"Réinitialiser les filtres": "Reset filters",
+"Mes commandants possédés uniquement": "Only commanders I own",
+"Trier par compatibilité": "Sort by compatibility",
+"Trier A→Z": "Sort A→Z",
+"Arrêter le tri": "Stop sorting",
+"Arrêt en cours…": "Stopping…",
+"Liste retriée par ordre alphabétique.": "List re-sorted alphabetically.",
+"Aucun commandant à trier pour le moment.": "No commander to sort right now.",
+"Calcul de compatibilité : préparation…": "Computing compatibility: preparing…",
+"Garde uniquement les commandants dont l'identité de couleur est exactement celle cochée. Sans couleur cochée, toute la liste est réaffichée.": "Keeps only commanders whose color identity is exactly the one checked. With no color checked, the whole list is shown again.",
+"Garde les commandants qui contiennent au minimum les couleurs cochées (ils peuvent en avoir d'autres en plus). Sans couleur cochée, toute la liste est réaffichée.": "Keeps commanders that contain at least the checked colors (they may have others in addition). With no color checked, the whole list is shown again.",
+"Remet à zéro tous les filtres : couleurs, « possédés uniquement », recherche, et filtres du tableau.": "Resets all filters: colors, “owned only”, search, and table filters.",
+"Blanc": "White",
+"Bleu": "Blue",
+"Noir": "Black",
+"Rouge": "Red",
+"Vert": "Green",
+"Incolore": "Colorless",
+"voir la fiche complète sur EDHREC ↗": "see the full page on EDHREC ↗",
+"ta collection": "your collection",
+"Score de compatibilité": "Compatibility score",
+"Cartes analysées": "Cards analyzed",
+"Possédées": "Owned",
+"Manquantes": "Missing",
+"Déjà dans le deck": "Already in the deck",
+"À ajouter au deck": "To add to the deck",
+"Toutes les cartes de la page EDHREC": "All cards from the EDHREC page",
+"classement EDHREC": "EDHREC ranking",
+"Filtrer les cartes": "Filter the cards",
+"Toutes les cartes": "All cards",
+"Toutes catégories": "All categories",
+"En deck : indifférent": "In deck: any",
+"Restants : indifférent": "Remaining: any",
+"Il en reste": "Some left",
+"Plus aucun restant": "None left",
+"Rechercher une carte…": "Search a card…",
+"Réinitialiser": "Reset",
+"Uniquement ces couleurs": "Only these colors",
+"Prix Cardmarket max": "Max Cardmarket price",
+"Prix Cardmarket : chargement…": "Cardmarket prices: loading…",
+"Synergie : toutes": "Synergy: all",
+"Inclusion : toutes": "Inclusion: all",
+"Légendaire": "Legendary",
+"Créature": "Creature",
+"Artefact": "Artifact",
+"Enchantement": "Enchantment",
+"Éphémère": "Instant",
+"Rituel": "Sorcery",
+"Terrain": "Land",
+"Bataille": "Battle",
+"Carte": "Card",
+"Catégorie": "Category",
+"Inclusion": "Inclusion",
+"Synergie": "Synergy",
+"Statut": "Status",
+"Restants": "Remaining",
+"En deck": "In deck",
+"Prix": "Price",
+"Éditions": "Editions",
+"Quantité": "Quantity",
+"Foil": "Foil",
+"Aucune carte ne correspond à ces filtres.": "No card matches these filters.",
+"Cartes (base complète)": "Cards (full database)",
+"Exporter → Moxfield (.txt)": "Export → Moxfield (.txt)",
+"Exporter → Cardmarket (.txt)": "Export → Cardmarket (.txt)",
+"Manquante": "Missing",
+"Hors du deck": "Not in the deck",
+"Oui": "Yes",
+"Non": "No",
+"possédée": "owned",
+"en deck": "in deck",
+"Vérifier la sélection avant export": "Review the selection before export",
+"Fermer": "Close",
+"Tout cocher": "Check all",
+"Tout décocher": "Uncheck all",
+"Décocher : possédées et déjà en deck": "Uncheck: owned and already in a deck",
+"Vérifie l'orthographe exacte du nom, ou réessaie — EDHREC est parfois temporairement indisponible.": "Check the exact spelling of the name, or try again — EDHREC is sometimes temporarily unavailable.",
+"Importe ta collection pour comparer chaque commandant à ce que tu possèdes. Une liste collée ou un fichier CSV (Manabox, Moxfield, Deckbox, Cardmarket…) suffit.": "Import your collection to compare each commander with what you own. A pasted list or a CSV file (Manabox, Moxfield, Deckbox, Cardmarket…) is enough.",
+"Coller une liste": "Paste a list",
+"Importer un fichier (.csv / .txt)": "Import a file (.csv / .txt)",
+"Mode d'import": "Import mode",
+"Remplacer ma collection": "Replace my collection",
+"Ajouter à ma collection": "Add to my collection",
+"Revenir à la collection d'origine": "Restore the original collection",
+"Colle ta collection : une carte par ligne (ex : 2 Sol Ring, 1x Command Tower (CMM) 123 *F*) ou le contenu d'un CSV (Manabox, Moxfield, Deckbox, Cardmarket, Dragon Shield…)": "Paste your collection: one card per line (e.g. 2 Sol Ring, 1x Command Tower (CMM) 123 *F*) or the content of a CSV (Manabox, Moxfield, Deckbox, Cardmarket, Dragon Shield…)",
+"Importer cette liste": "Import this list",
+"Rechercher une carte": "Search a card",
+"Nom de la carte…": "Card name…",
+"Présence en deck": "Deck presence",
+"Indifférent": "Any",
+"Déjà en deck": "Already in a deck",
+"Pas encore en deck": "Not in a deck yet",
+"Ta collection est vide : importe une liste collée ou un fichier CSV (Manabox, Moxfield, Deckbox…) avec les boutons ci-dessus. Tes données restent dans ton navigateur.": "Your collection is empty: import a pasted list or a CSV file (Manabox, Moxfield, Deckbox…) with the buttons above. Your data stays in your browser.",
+"le texte collé": "the pasted text",
+"Revenir à la collection d'origine (celle intégrée dans l'outil) ? Ton import actuel sera supprimé.": "Restore the original collection (the one built into the tool)? Your current import will be deleted.",
+"Ajouter un deck": "Add a deck",
+"Colle la liste d'un deck pour pouvoir y comparer les commandants et suivre les exemplaires déjà engagés.": "Paste a deck list to compare commanders against it and track which copies are already committed.",
+"Nom du deck": "Deck name",
+"Commandant (optionnel)": "Commander (optional)",
+"Liste des cartes": "Card list",
+"Colle ici la liste du deck, une carte par ligne (ex : 1 Sol Ring)": "Paste the deck list here, one card per line (e.g. 1 Sol Ring)",
+"Enregistrer ce deck": "Save this deck",
+"ex : Ally — Aang and Katara": "e.g. Ally — Aang and Katara",
+"ex : Aang and Katara": "e.g. Aang and Katara",
+"Supprimer": "Delete",
+"Indique un nom de deck et colle au moins une carte.": "Enter a deck name and paste at least one card.",
+"Aucun deck enregistré pour l'instant. Colle une liste ci-dessus et clique sur « Enregistrer ce deck » pour commencer — tu pourras ensuite comparer un commandant directement à ce deck plutôt qu'à toute ta collection.": "No deck saved yet. Paste a list above and click “Save this deck” to get started — you'll then be able to compare a commander directly against that deck instead of your whole collection.",
+"Outil communautaire non officiel. Données de recommandation : EDHREC. Données de cartes, images et prix : Scryfall / Cardmarket. Magic: The Gathering est une marque de Wizards of the Coast, dont cet outil n'est pas affilié.": "Unofficial community tool. Recommendation data: EDHREC. Card data, images and prices: Scryfall / Cardmarket. Magic: The Gathering is a trademark of Wizards of the Coast, with which this tool is not affiliated.",
+"CollecTool — optimise ta collection Magic": "CollecTool — optimize your Magic collection"
+};
+  const NUM = s => String(s).replace(/(\d)[\s\u00a0\u202f](?=\d)/g, '$1,');
+  const DATE = s => { const m = String(s).match(/^(\d{2})\/(\d{2})\/(\d{4})$/); if(!m) return s; return new Date(+m[3], +m[2]-1, +m[1]).toLocaleDateString('en-US', {year:'numeric', month:'short', day:'numeric'}); };
+  let T; // traduction imbriquée (définie plus bas)
+  const P = [
+    [/^(\d+)\/(\d+) carte\(s\) sélectionnée\(s\) pour l'export$/, m=>`${m[1]}/${m[2]} card(s) selected for export`],
+    [/^Chargement des couleurs \(pour le filtre\)… (\d+) %$/, m=>`Loading colors (for the filter)… ${m[1]}%`],
+    [/^Scryfall a répondu (\d+)( \(trop de requêtes\))?$/, m=>`Scryfall responded ${m[1]}${m[2] ? ' (too many requests)' : ''}`],
+    [/^EDHREC a répondu (\d+) — ça ressemble à un blocage temporaire anti-robot\. Attends quelques minutes avant de réessayer\.$/, m=>`EDHREC responded ${m[1]} — this looks like a temporary anti-bot block. Wait a few minutes before trying again.`],
+    [/^EDHREC a répondu (\d+)$/, m=>`EDHREC responded ${m[1]}`],
+    [/^Prix Cardmarket : (\d+)\/(\d+) — erreur \(([\s\S]*)\), certains prix resteront « n\/a »\. Réessaie plus tard si besoin\.$/, m=>`Cardmarket prices: ${m[1]}/${m[2]} — error (${T(m[3])}), some prices will stay “n/a”. Try again later if needed.`],
+    [/^Prix Cardmarket : (\d+)\/(\d+) chargés$/, m=>`Cardmarket prices: ${m[1]}/${m[2]} loaded`],
+    [/^Deck : ([\s\S]*)$/, m=>`Deck: ${m[1]}`],
+    [/^Aucun fichier \.csv trouvé dans l'archive TAR\. Fichiers vus : ([\s\S]*)\.$/, m=>`No .csv file found in the TAR archive. Files seen: ${T(m[1])}.`],
+    [/^Fichier trouvé : ([\s\S]*) \((\d+) Mo\) — analyse en flux…$/, m=>`File found: ${m[1]} (${m[2]} MB) — streaming analysis…`],
+    [/^Analyse en flux : ligne ([\s\S]*)…$/, m=>`Streaming analysis: line ${NUM(m[1])}…`],
+    [/^Analyse en flux : (\d+) \/ (\d+) Mo…$/, m=>`Streaming analysis: ${m[1]} / ${m[2]} MB…`],
+    [/^Délimiteur détecté : ([\s\S]*)…$/, m=>`Delimiter detected: ${m[1]}…`],
+    [/^Aucune ligne reconnue avec le délimiteur ([\s\S]*?)\. Aperçu du début du fichier : ([\s\S]*)$/, m=>`No line recognized with delimiter ${m[1]}. Preview of the start of the file: ${m[2].replace(/Premiers octets \(hex\) :/g, 'First bytes (hex):')}`],
+    [/^Aucune ligne reconnue avec le délimiteur ([\s\S]*?)\. Aperçu du début du fichier ([\s\S]*?) : ([\s\S]*)$/, m=>`No line recognized with delimiter ${m[1]}. Preview of the start of the file ${m[2]}: ${m[3].replace(/Premiers octets \(hex\) :/g, 'First bytes (hex):')}`],
+    [/^Calcul \(([\s\S]*) commandants\)…$/, m=>`Computing (${NUM(m[1])} commanders)…`],
+    [/^Enregistrement local : (\d+)\/(\d+)…$/, m=>`Saving locally: ${m[1]}/${m[2]}…`],
+    [/^Analyse du CSV : ligne ([\s\S]*)…$/, m=>`Analyzing the CSV: line ${NUM(m[1])}…`],
+    [/^Vérification du fichier \((\d+) Mo\)…$/, m=>`Checking the file (${m[1]} MB)…`],
+    [/^([\d\s\u00a0\u202f]+) commandants en base locale(?: · mise à jour le (\d{2}\/\d{2}\/\d{4}))?$/, m=>`${NUM(m[1].trim())} commanders in the local database${m[2] ? ' · updated ' + DATE(m[2]) : ''}`],
+    [/^(Exactement|Au minimum) (\S*) : (\d+) commandant\(s\)$/, m=>`${m[1]==='Exactement' ? 'Exactly' : 'At least'} ${m[2]}: ${m[3]} commander(s)`],
+    [/^(\d+) commandant\(s\) affiché\(s\) sur (\d+) chargés(?: \(filtré aux possédés : (\d+)\))?$/, m=>`${m[1]} commander(s) shown out of ${m[2]} loaded${m[3] ? ' (filtered to owned: ' + m[3] + ')' : ''}`],
+    [/^Calcul de compatibilité : (\d+)\/(\d+)( \(arrêt en cours…\))?…$/, m=>`Computing compatibility: ${m[1]}/${m[2]}${m[3] ? ' (stopping…)' : ''}…`],
+    [/^(Tri arrêté|Tri terminé) — (\d+) commandant\(s\) triés \(meilleur en tête\)\.$/, m=>`${m[1]==='Tri arrêté' ? 'Sorting stopped' : 'Sorting done'} — ${m[2]} commander(s) sorted (best first).`],
+    [/^Chargement des données EDHREC pour « ([\s\S]*) »…$/, m=>`Loading EDHREC data for “${m[1]}”…`],
+    [/^Impossible de récupérer ce commandant depuis EDHREC \(([\s\S]*)\)\.$/, m=>`Could not retrieve this commander from EDHREC (${T(m[1])}).`],
+    [/^Comparaison de ([\s\S]*) avec les recommandations EDHREC —$/, m=>`Comparison of ${T(m[1])} with EDHREC recommendations —`],
+    [/^le deck « ([\s\S]*) »$/, m=>`the deck “${m[1]}”`],
+    [/^Part de ([\s\S]*) déjà alignée avec ce commandant, pondérée par inclusion et synergie\.$/, m=>`Share of ${T(m[1])} already aligned with this commander, weighted by inclusion and synergy.`],
+    [/^Sélection : inclusion minimum ([\d.,]+) %$/, m=>`Selection: minimum inclusion ${m[1]}%`],
+    [/^Synergie ≥ (\d+)%$/, m=>`Synergy ≥ ${m[1]}%`],
+    [/^Inclusion ≥ (\d+)%$/, m=>`Inclusion ≥ ${m[1]}%`],
+    [/^classement sur ([\s\S]*) commandants$/, m=>`ranking among ${NUM(m[1])} commanders`],
+    [/^(Dans le deck|Possédée) ×(\d+)$/, m=>`${m[1]==='Possédée' ? 'Owned' : 'In the deck'} ×${m[2]}`],
+    [/^(\d+) carte\(s\) dans la sélection à exporter$/, m=>`${m[1]} card(s) in the selection to export`],
+    [/^Voir ([\s\S]*) sur EDHREC$/, m=>`View ${m[1]} on EDHREC`],
+    [/^(\d+) carte\(s\) \(soit (\d+) entrées distinctes\)$/, m=>`${m[1]} card(s) (${m[2]} distinct entries)`],
+    [/^Deck « ([\s\S]*) » enregistré \((\d+) cartes\)\.$/, m=>`Deck “${m[1]}” saved (${m[2]} cards).`],
+    [/^Supprimer le deck « ([\s\S]*) » \?$/, m=>`Delete the deck “${m[1]}”?`],
+    [/^(\d+) cartes uniques \(sur (\d+) au total\)$/, m=>`${m[1]} unique cards (out of ${m[2]} in total)`],
+    [/^Aucune carte reconnue dans ([\s\S]*)\. Vérifie le format \(une carte par ligne, ou un CSV avec une colonne Name\/Card\)\.$/, m=>`No card recognized in ${T(m[1])}. Check the format (one card per line, or a CSV with a Name/Card column).`],
+    [/^Importé depuis ([\s\S]*) : (\d+) cartes uniques \((\d+) exemplaires\)\. Collection actuelle : (\d+) cartes uniques\.$/, m=>`Imported from ${T(m[1])}: ${m[2]} unique cards (${m[3]} copies). Current collection: ${m[4]} unique cards.`],
+    [/^Collection d'origine restaurée \((\d+) cartes uniques\)\.$/, m=>`Original collection restored (${m[1]} unique cards).`],
+    [/^« ([\s\S]*) »$/, m=>`“${m[1]}”`],
+    [/^Téléchargement et analyse en direct : ([\s\S]*) Mo reçus…$/, m=>`Live download and analysis: ${NUM(m[1])} MB received…`],
+    [/^Terminé : ([\s\S]*) commandants enregistrés localement, directement depuis edhrec\.com\.$/, m=>`Done: ${NUM(m[1])} commanders saved locally, straight from edhrec.com.`],
+    [/^Terminé : ([\s\S]*) commandants enregistrés localement depuis « ([\s\S]*) »\. Ils se chargeront désormais instantanément, sans requête réseau\.$/, m=>`Done: ${NUM(m[1])} commanders saved locally from “${m[2]}”. They will now load instantly, with no network request.`],
+    [/^Mise à jour impossible : ([\s\S]*)\. Tu peux toujours importer un data\.tgz téléchargé à la main avec « Importer nouvelle BDD »\.$/, m=>`Update failed: ${T(m[1])}. You can still import a data.tgz downloaded by hand with “Import new database”.`],
+    [/^Erreur en lisant ([\s\S]*?) : ([\s\S]*)$/, m=>`Error reading ${m[1]}: ${T(m[2])}`],
+    [/^Base locale déjà en place \(([\s\S]*) commandants\), téléchargée le (\d{2}\/\d{2}\/\d{4})\.$/, m=>`Local database already in place (${NUM(m[1])} commanders), downloaded ${DATE(m[2])}.`],
+    [/^(\d+),(\d{2})$/, m=>`${m[1]}.${m[2]}`],
+    [/^(\d+\.\d{2}) €$/, m=>`€${m[1]}`],
+    [/^\d[\d\s\u00a0\u202f]*\d$/, m=>NUM(m[0])],
+  ];
+  // Index des motifs par les premiers caractères littéraux (évite de tout tester sur chaque texte).
+  const PIDX = {};
+  P.forEach(p=>{
+    const src = p[0].source.replace(/^\^/, '');
+    let lit = ''; for(const ch of src){ if('()[]\\.*+?|{}$'.includes(ch)) break; lit += ch; if(lit.length>=4) break; }
+    const key = (lit.length >= 3) ? lit.slice(0,4) : '#';
+    (PIDX[key] = PIDX[key] || []).push(p);
+  });
+  function trCore(core){
+    if(Object.prototype.hasOwnProperty.call(EN, core)) return EN[core];
+    const keys = [core.slice(0,4), '#'];
+    for(const k of keys){
+      const list = PIDX[k]; if(!list) continue;
+      for(const [re,fn] of list){ const m = core.match(re); if(m) return fn(m); }
+    }
+    return core;
+  }
+  T = s => trText(s);
+  function trText(str){
+    const m = String(str).match(/^(\s*)([\s\S]*?)(\s*)$/);
+    if(!m || !m[2]) return str;
+    const out = trCore(m[2]);
+    return out === m[2] ? str : m[1] + out + m[3];
+  }
+
+  // ---------- état + application au DOM ----------
+  const KEY = 'ct_lang';
+  let LANG = (function(){
+    try{ const v = localStorage.getItem(KEY); if(v === 'fr' || v === 'en') return v; }catch(e){}
+    return String(navigator.language || 'fr').toLowerCase().startsWith('fr') ? 'fr' : 'en';
+  })();
+  const origText = new WeakMap();
+  const origAttr = new WeakMap();
+  const ATTRS = ['placeholder', 'title', 'alt', 'aria-label'];
+  const SKIP = 'script,style,textarea,[translate="no"],.name';
+  function skipped(el){ return !!(el && el.closest && el.closest(SKIP)); }
+  const SKIP_ATTR = 'script,style,[translate="no"],.name';  // le placeholder d'un textarea se traduit, son contenu (saisie) jamais
+  function skippedAttr(el){ return !!(el && el.closest && el.closest(SKIP_ATTR)); }
+  function applyText(node){
+    if(skipped(node.parentElement)) return;
+    const cur = node.nodeValue, rec = origText.get(node);
+    if(LANG === 'en'){
+      if(rec && rec.en === cur) return;
+      const en = trText(cur);
+      if(en !== cur){ origText.set(node, {fr:cur, en}); node.nodeValue = en; }
+      else if(rec) origText.delete(node);
+    }else if(rec){
+      if(cur === rec.en) node.nodeValue = rec.fr;
+      origText.delete(node);
+    }
+  }
+  function applyAttr(el, name){
+    if(skippedAttr(el)) return;
+    const cur = el.getAttribute(name); if(cur === null) return;
+    let recs = origAttr.get(el); const rec = recs && recs[name];
+    if(LANG === 'en'){
+      if(rec && rec.en === cur) return;
+      const en = trText(cur);
+      if(en !== cur){ if(!recs){ recs = {}; origAttr.set(el, recs); } recs[name] = {fr:cur, en}; el.setAttribute(name, en); }
+      else if(rec) delete recs[name];
+    }else if(rec){
+      if(cur === rec.en) el.setAttribute(name, rec.fr);
+      delete recs[name];
+    }
+  }
+  function applyEl(el){ for(const a of ATTRS) if(el.hasAttribute && el.hasAttribute(a)) applyAttr(el, a); }
+  function walk(root){
+    if(root.nodeType === 3){ applyText(root); return; }
+    if(root.nodeType !== 1) return;
+    applyEl(root);
+    const tw = document.createTreeWalker(root, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT);
+    while(tw.nextNode()){ const n = tw.currentNode; if(n.nodeType === 3) applyText(n); else applyEl(n); }
+  }
+  const obs = new MutationObserver(muts=>{
+    for(const m of muts){
+      if(m.type === 'characterData') applyText(m.target);
+      else if(m.type === 'attributes') applyAttr(m.target, m.attributeName);
+      else m.addedNodes.forEach(walk);
+    }
+  });
+  function startObs(){ obs.observe(document.body, {childList:true, subtree:true, characterData:true, attributes:true, attributeFilter:ATTRS}); }
+
+  const flagOf = l => '<svg viewBox="0 0 30 20" aria-hidden="true"><use href="#flag-' + (l === 'en' ? 'gb' : 'fr') + '"/></svg>';
+  function refreshUI(){
+    const f = document.getElementById('lang-flag'), c = document.getElementById('lang-code');
+    if(f) f.innerHTML = flagOf(LANG);
+    if(c) c.textContent = LANG.toUpperCase();
+    document.documentElement.lang = LANG;
+    document.querySelectorAll('#lang-pop [data-lang]').forEach(b=>b.setAttribute('aria-checked', String(b.dataset.lang === LANG)));
+    const FRTITLE = 'CollecTool — optimise ta collection Magic';
+    document.title = LANG === 'en' ? (EN[FRTITLE] || FRTITLE) : FRTITLE;
+    const md = document.querySelector('meta[name="description"]');
+    if(md){
+      if(!md.dataset.fr) md.dataset.fr = md.getAttribute('content');
+      md.setAttribute('content', LANG === 'en' ? 'Compare your Magic: The Gathering collection with EDHREC recommendations for each commander: compatibility score, missing cards, prices, export to a deckbuilder or Cardmarket.' : md.dataset.fr);
+    }
+  }
+  function setLang(l){
+    if(l !== 'fr' && l !== 'en') return;
+    LANG = l;
+    try{ localStorage.setItem(KEY, l); }catch(e){}
+    obs.disconnect();
+    walk(document.body);
+    if(LANG === 'en') startObs();
+    refreshUI();
+  }
+  window.i18nT = s => LANG === 'en' ? trText(s) : s;   // pour confirm() et autres textes hors page
+  window.i18nLang = () => LANG;
+
+  // ---------- sélecteur de langue (drapeau) ----------
+  const btn = document.getElementById('lang-btn'), pop = document.getElementById('lang-pop');
+  if(btn && pop){
+    const close = ()=>{ pop.hidden = true; btn.setAttribute('aria-expanded', 'false'); };
+    btn.addEventListener('click', e=>{ e.stopPropagation(); const open = pop.hidden; pop.hidden = !open; btn.setAttribute('aria-expanded', String(open)); });
+    pop.querySelectorAll('[data-lang]').forEach(b=>b.addEventListener('click', ()=>{ setLang(b.dataset.lang); close(); btn.focus(); }));
+    document.addEventListener('click', e=>{ if(!pop.hidden && !pop.contains(e.target) && !btn.contains(e.target)) close(); });
+    document.addEventListener('keydown', e=>{ if(e.key === 'Escape' && !pop.hidden){ close(); btn.focus(); } });
+  }
+  refreshUI();
+  if(LANG === 'en'){ walk(document.body); startObs(); }
+})();
+
+</script>
 <script>
 const deckCardNames = new Set([]);
 let decks = [];
@@ -2109,6 +2496,7 @@ function renderCommanderData(key){
   });
   queuePrices(cards.map(c=>c.n), ()=>{ renderRows(); });
   function currentFilteredList(){
+    if(!document.getElementById('f-status')) return [];
     const status = document.getElementById('f-status').value;
     const cat = document.getElementById('f-cat').value;
     const incMin = Number(document.getElementById('f-inc').value);
@@ -2147,6 +2535,8 @@ function renderCommanderData(key){
     return list;
   }
   function renderRows(){
+    // La fiche a pu être remplacée (autre commandant, erreur…) pendant qu'un lot de prix arrivait.
+    if(!document.getElementById('f-status') || !document.getElementById('tbody')) return;
     const list = currentFilteredList();
 
     const tbody = document.getElementById('tbody');
@@ -2270,7 +2660,7 @@ function saveDeck(){
 function deleteDeck(id){
   const deck = decks.find(d=>d.id===id);
   if(!deck) return;
-  if(!confirm('Supprimer le deck « ' + deck.name + ' » ?')) return;
+  if(!confirm(i18nT('Supprimer le deck « ' + deck.name + ' » ?'))) return;
   decks = decks.filter(d=>d.id!==id);
   saveDecks();
   rebuildCombinedDeckNames();
@@ -2536,7 +2926,7 @@ document.getElementById('coll-file').addEventListener('change', async (e)=>{
   e.target.value = '';
 });
 document.getElementById('coll-reset-btn').addEventListener('click', ()=>{
-  if(!confirm('Revenir à la collection d\'origine (celle intégrée dans l\'outil) ? Ton import actuel sera supprimé.')) return;
+  if(!confirm(i18nT('Revenir à la collection d\'origine (celle intégrée dans l\'outil) ? Ton import actuel sera supprimé.'))) return;
   collection = COLLECTION_ORIGINAL;
   try{ localStorage.removeItem('ct_collection'); }catch(e){}
   const st = document.getElementById('coll-import-status');
